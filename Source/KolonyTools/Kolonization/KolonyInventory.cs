@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using USITools;
+using KSP.Localization;
 
 namespace KolonyTools
 {
@@ -32,6 +33,10 @@ namespace KolonyTools
         public KolonyInventory()
         {
             _labelStyle = new GUIStyle(HighLogic.Skin.label);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _labelStyle.fontSize = 15;
+            }
             _texStyle = new GUIStyle(HighLogic.Skin.label);
             _texStyle.margin.left = 0;
             _texStyle.margin.right = 0;
@@ -169,7 +174,7 @@ namespace KolonyTools
         {
             if (!HighLogic.LoadedSceneIsFlight)
             {
-                GUILayout.Label("Kolony Inventory only available on active vessels.", _labelStyle, GUILayout.Width(400));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KI_NoActiveVessel"), _labelStyle, GUILayout.Width(400));
                 return;
             }
 
@@ -179,14 +184,14 @@ namespace KolonyTools
                 RefreshResourceList();
             }
 
-            _scrollPos = GUILayout.BeginScrollView(_scrollPos, _scrollStyle, GUILayout.Width(680), GUILayout.Height(380));
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, _scrollStyle, GUILayout.Width(680), GUILayout.Height(360));
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("<color=#FFFFFF>Resource</color>", _labelStyle, GUILayout.Width(180));
-            GUILayout.Label("<color=#FFFFFF>Inventory</color>", _labelStyle, GUILayout.Width(190));
-            GUILayout.Label("<color=#FFFFFF>Rate</color>", _labelStyle, GUILayout.Width(80));
-            GUILayout.Label("<color=#FFFFFF>Supply</color>", _labelStyle, GUILayout.Width(150));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KI_Res"), _labelStyle, GUILayout.Width(180));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KI_Ivt"), _labelStyle, GUILayout.Width(190));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KI_Rate"), _labelStyle, GUILayout.Width(80));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KI_Sup"), _labelStyle, GUILayout.Width(150));
             GUILayout.EndHorizontal();
 
             var count = _resourceList.Count;

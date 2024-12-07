@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using USITools.UI;
+using KSP.Localization;
 
 namespace KolonyTools
 {
@@ -15,6 +16,17 @@ namespace KolonyTools
         private Vector2 _scrollPosition;
         private OrbitalLogisticsTransferRequest _selectedTransfer;
         private bool _isVisible;
+        private GUIStyle _labelStyle;
+
+        public OrbitalLogisticsGuiMain_Scenario()
+        {
+            _labelStyle = new GUIStyle(HighLogic.Skin.label);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _labelStyle.fontSize = 15;
+            }
+        }
+
         #endregion
 
         #region Public instance variables
@@ -44,12 +56,12 @@ namespace KolonyTools
             OrbitalLogisticsTransferRequest[] expiredTransfers = _scenario.ExpiredTransfers.ToArray();
 
             // Display everything inside a scroll view
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, UIHelper.scrollStyle, GUILayout.Width(680), GUILayout.Height(380));
+            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, UIHelper.scrollStyle, GUILayout.Width(680), GUILayout.Height(360));
             GUILayout.BeginVertical();
 
             // Display pending transfer section header
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Pending Transfers", UIHelper.labelStyle, GUILayout.Width(200));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_PTran"), UIHelper.labelStyle, GUILayout.Width(200));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginVertical();
@@ -57,7 +69,7 @@ namespace KolonyTools
             if (pendingTransfers.Length == 0)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("None", UIHelper.whiteLabelStyle, GUILayout.Width(160));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_None"), UIHelper.whiteLabelStyle, GUILayout.Width(160));
                 GUILayout.EndHorizontal();
             }
             else
@@ -65,11 +77,11 @@ namespace KolonyTools
                 // Display pending transfer column headers
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(string.Empty, UIHelper.labelStyle, GUILayout.Width(25));
-                GUILayout.Label(" Origin", UIHelper.whiteLabelStyle, GUILayout.Width(165));
-                GUILayout.Label("Destination", UIHelper.whiteLabelStyle, GUILayout.Width(165));
-                GUILayout.Label("Cost", UIHelper.whiteLabelStyle, GUILayout.Width(80));
-                GUILayout.Label("Mass", UIHelper.whiteLabelStyle, GUILayout.Width(80));
-                GUILayout.Label("Arrival Time", UIHelper.whiteLabelStyle, GUILayout.Width(90));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Ori"), UIHelper.whiteLabelStyle, GUILayout.Width(165));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Des"), UIHelper.whiteLabelStyle, GUILayout.Width(165));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Cost"), UIHelper.whiteLabelStyle, GUILayout.Width(80));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Mass"), UIHelper.whiteLabelStyle, GUILayout.Width(80));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_ArT"), UIHelper.whiteLabelStyle, GUILayout.Width(90));
                 GUILayout.EndHorizontal();
 
                 // Display pending transfers
@@ -133,7 +145,7 @@ namespace KolonyTools
 
             // Display expired transfer section header
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Expired Transfers", UIHelper.labelStyle, GUILayout.Width(200));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_ETran"), UIHelper.labelStyle, GUILayout.Width(200));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginVertical();
@@ -141,7 +153,7 @@ namespace KolonyTools
             if (expiredTransfers.Length == 0)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("None", UIHelper.whiteLabelStyle, GUILayout.Width(160));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_None"), UIHelper.whiteLabelStyle, GUILayout.Width(160));
                 GUILayout.EndHorizontal();
             }
             else
@@ -149,11 +161,11 @@ namespace KolonyTools
                 // Display expired transfer column headers
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(string.Empty, UIHelper.labelStyle, GUILayout.Width(25));
-                GUILayout.Label(" Origin", UIHelper.whiteLabelStyle, GUILayout.Width(165));
-                GUILayout.Label("Destination", UIHelper.whiteLabelStyle, GUILayout.Width(165));
-                GUILayout.Label("Cost", UIHelper.whiteLabelStyle, GUILayout.Width(80));
-                GUILayout.Label("Mass", UIHelper.whiteLabelStyle, GUILayout.Width(80));
-                GUILayout.Label("Status", UIHelper.whiteLabelStyle, GUILayout.Width(90));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Ori"), UIHelper.whiteLabelStyle, GUILayout.Width(165));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Des"), UIHelper.whiteLabelStyle, GUILayout.Width(165));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Cost"), UIHelper.whiteLabelStyle, GUILayout.Width(80));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Mass"), UIHelper.whiteLabelStyle, GUILayout.Width(80));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_OL_Stt"), UIHelper.whiteLabelStyle, GUILayout.Width(90));
                 GUILayout.EndHorizontal();
 
                 // Diplay expired transfers

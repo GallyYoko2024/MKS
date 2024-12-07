@@ -8,6 +8,7 @@ using UnityEngine;
 using KSP.UI.Screens;
 using PlanetaryLogistics;
 using USITools.UI;
+using KSP.Localization;
 
 namespace KolonyTools
 {
@@ -101,7 +102,7 @@ namespace KolonyTools
             }
 
             // Setup tab labels
-            _tabLabels = new[] { "Kolony Statistics", "Local Logistics", "Planetary Logistics", "Kolony Inventory", "Orbital Logistics" };
+            _tabLabels = new[] { Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable1"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable2"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable3"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable4"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable5") };
         }
 
         private void InitStyles()
@@ -109,10 +110,27 @@ namespace KolonyTools
             _windowStyle = new GUIStyle(HighLogic.Skin.window);
             _windowStyle.fixedWidth = 700;
             _windowStyle.fixedHeight = 460f;
+            _windowStyle.fontSize = 20;
+            _windowStyle.padding = new RectOffset(10, 10, 40, 10); 
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _windowStyle.fontStyle = FontStyle.Normal;
+            }
             _labelStyle = new GUIStyle(HighLogic.Skin.label);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _labelStyle.fontSize = 15;
+            }
             _scrollStyle = new GUIStyle(HighLogic.Skin.scrollView);
-            _smButtonStyle = new GUIStyle(HighLogic.Skin.button);
-            _smButtonStyle.fontSize = 10;
+            _smButtonStyle = new GUIStyle(HighLogic.Skin.button); 
+            _smButtonStyle.fixedHeight = 36;   
+            _smButtonStyle.fontSize = 15; 
+            _smButtonStyle.margin = new RectOffset(5, 5, 5, 5);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _smButtonStyle.fontStyle = FontStyle.Normal;
+                _smButtonStyle.normal.textColor = Color.white;
+            }  
             _hasInitStyles = true;
         }
 
@@ -127,7 +145,7 @@ namespace KolonyTools
                     return;
 
                 // Draw main window
-                _windowPosition = GUILayout.Window(12, _windowPosition, OnWindow, "Kolonization Dashboard", _windowStyle);
+                _windowPosition = GUILayout.Window(12, _windowPosition, OnWindow, Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Title"), _windowStyle);
 
                 // Draw child windows
                 foreach (var window in _childWindows)
@@ -149,9 +167,11 @@ namespace KolonyTools
         {
             GUILayout.BeginVertical();
 
+            GUILayout.Space(10);
+
             // Show UI navigation tabs
             GUILayout.BeginHorizontal();
-            activeTab = GUILayout.SelectionGrid(activeTab, _tabLabels, 6, _smButtonStyle);
+            activeTab = GUILayout.SelectionGrid(activeTab, _tabLabels, 5, _smButtonStyle);
             GUILayout.EndHorizontal();
 
             // Show the UI for the currently selected tab
@@ -185,14 +205,14 @@ namespace KolonyTools
         /// </summary>
         private void ShowKolonyStats()
         { 
-            _scrollPos = GUILayout.BeginScrollView(_scrollPos, _scrollStyle, GUILayout.Width(680), GUILayout.Height(380));
+            _scrollPos = GUILayout.BeginScrollView(_scrollPos, _scrollStyle, GUILayout.Width(680), GUILayout.Height(360));
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(String.Format("Body Name"), _labelStyle, GUILayout.Width(135));
-            GUILayout.Label(String.Format("Geology"), _labelStyle, GUILayout.Width(120));
-            GUILayout.Label(String.Format("Botany"), _labelStyle, GUILayout.Width(120));
-            GUILayout.Label(String.Format("Kolonization"), _labelStyle, GUILayout.Width(120));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KS_Lable1"), _labelStyle, GUILayout.Width(135));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KS_Lable2"), _labelStyle, GUILayout.Width(120));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KS_Lable3"), _labelStyle, GUILayout.Width(120));
+            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_KS_Lable4"), _labelStyle, GUILayout.Width(120));
             GUILayout.EndHorizontal();
 
             var focusedPlanet = GetFocusedPlanet();

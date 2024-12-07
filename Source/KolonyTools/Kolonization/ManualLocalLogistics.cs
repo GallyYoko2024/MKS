@@ -10,6 +10,7 @@ using USITools;
 using Random = System.Random;
 using KSP.UI.Screens;
 using PlanetaryLogistics;
+using KSP.Localization;
 
 namespace KolonyTools
 {
@@ -40,6 +41,10 @@ namespace KolonyTools
         {
             _broker = new ResourceBroker();
             _labelStyle = new GUIStyle(HighLogic.Skin.label);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _labelStyle.fontSize = 15;
+            }
             _rightlabelStyle = new GUIStyle(HighLogic.Skin.label);
             _rightlabelStyle.alignment = TextAnchor.MiddleRight;
             _scrollStyle = new GUIStyle(HighLogic.Skin.scrollView);
@@ -126,14 +131,14 @@ namespace KolonyTools
         {
             if(!HighLogic.LoadedSceneIsFlight)
             {
-                GUILayout.Label("Local transfers are only available in flight.", _labelStyle, GUILayout.Width(400));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_LL_Lable1"), _labelStyle, GUILayout.Width(400));
                 return;
             }
 
             CheckVessels();
             if (!_crewPresent || _participatingVessels.Count < 2)
             {
-                GUILayout.Label(String.Format("No other vessels, or no crew present"), _labelStyle, GUILayout.Width(400));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_LL_Lable2"), _labelStyle, GUILayout.Width(400));
                 return;
             }
 
@@ -163,7 +168,7 @@ namespace KolonyTools
             
             //Now our resources...
             if(_transferableResources.Count == 0)
-                GUILayout.Label("No transferrable resources present.", _labelStyle, GUILayout.Width(300));
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_LL_Lable3"), _labelStyle, GUILayout.Width(300));
 
             UpdateResourceList();
             var i = 0;
