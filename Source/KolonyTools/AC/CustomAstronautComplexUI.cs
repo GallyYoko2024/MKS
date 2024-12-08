@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KSP.UI.Screens;
 using UnityEngine;
+using KSP.Localization;
 
 //Borrowed from The Read Panda's excellent mod, TRP-Hire, with permission.
 
@@ -21,15 +22,19 @@ namespace KolonyTools.AC
         private List<Kolonist> _kolonists;
         private static int KLevel = 0;
         private string[] _recruitableKolonists;
-        private string[] KLevelStringsZero = new string[1] { "Level 0" };
-        private string[] KLevelStringsOne = new string[2] { "Level 0", "Level 1" };
-        private string[] KLevelStringsTwo = new string[3] { "Level 0", "Level 1", "Level 2" };
+        private string[] _displayRecruitableKolonists;
+        private string[] KLevelStringsZero = new string[1] { Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv0") };
+        private string[] KLevelStringsOne = new string[2] { Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv0"), Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv1") };
+        private string[] KLevelStringsTwo = new string[3] { Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv0"), Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv1"), Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv2") };
         //private string[] KLevelStringsAll = new string[6] { "Level 0", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5" };
         private static int KGender = 0;
         private GUIContent KMale;
         private GUIContent KFemale;
         private GUIContent KGRandom;
         private GUIContent[] KGendArray;
+        private GUIStyle _ButtonStyle;
+        private GUIStyle _GenderButtonStyle;
+        private bool _hasInitStyles = false;
         Color basecolor;
         private float ACLevel = 0;
         private double KDead;
@@ -54,31 +59,53 @@ namespace KolonyTools.AC
             }
         }
 
+        private void InitStyles()
+        {
+            _ButtonStyle = new GUIStyle(HighLogic.Skin.button);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _ButtonStyle.fontStyle = FontStyle.Normal;
+                _ButtonStyle.normal.textColor = Color.white;
+            }  
+            _GenderButtonStyle = new GUIStyle(HighLogic.Skin.button);
+            if (Localizer.CurrentLanguage == "zh-cn")
+            {
+                _GenderButtonStyle.fontSize = 20;
+                _GenderButtonStyle.fontStyle = FontStyle.Normal;
+                _GenderButtonStyle.normal.textColor = Color.white;
+            }
+            _hasInitStyles = true;
+        }
+
         private void Awake()
         {
+            if (!_hasInitStyles)
+            {
+                InitStyles();
+            }
             _areaRect = new Rect(-500f, -500f, 200f, 200f);
-            KMale = new GUIContent("Male", AssetBase.GetTexture("kerbalicon_recruit"));
-            KFemale = new GUIContent("Female", AssetBase.GetTexture("kerbalicon_recruit_female"));
-            KGRandom = new GUIContent("Random", "When this option is selected the kerbal might be male or female");
+            KMale = new GUIContent(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Male"), AssetBase.GetTexture("kerbalicon_recruit"));
+            KFemale = new GUIContent(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Female"), AssetBase.GetTexture("kerbalicon_recruit_female"));
+            KGRandom = new GUIContent(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Random"), "When this option is selected the kerbal might be male or female");
             basecolor = GUI.color;
             roster = HighLogic.CurrentGame.CrewRoster;
             kerExp = HighLogic.CurrentGame.Parameters.CustomParams<GameParameters.AdvancedParams>().KerbalExperienceEnabled(HighLogic.CurrentGame.Mode);
 
             _kolonists = new List<Kolonist>
             {
-                new Kolonist { Name = "Pilot", isBase = true, Effects = "Autopilot, VesselControl, RepBoost, Logistics, Explorer" },
-                new Kolonist { Name = "Scientist", isBase = true, Effects = "Science, Experiment, Botany, Agronomy, Medical, ScienceBoost" },
-                new Kolonist { Name = "Engineer", isBase = true, Effects = "Repair, Converter, Drill, Geology, FundsBoost" },
-                new Kolonist { Name = "Kolonist", isBase = false, Effects = "RepBoost, FundsBoost, ScienceBoost" },
-                new Kolonist { Name = "Miner", isBase = false, Effects = "Drill, FundsBoost" },
-                new Kolonist { Name = "Technician", isBase = false, Effects = "Converter, FundsBoost" },
-                new Kolonist { Name = "Mechanic", isBase = false, Effects = "Repair, FundsBoost" },
-                new Kolonist { Name = "Biologist", isBase = false, Effects = "Biology, ScienceBoost" },
-                new Kolonist { Name = "Geologist", isBase = false, Effects = "Geology, FundsBoost" },
-                new Kolonist { Name = "Farmer", isBase = false, Effects = "Agronomy, ScienceBoost, RepBoost" },
-                new Kolonist { Name = "Medic", isBase = false, Effects = "Medical, ScienceBoost, RepBoost" },
-                new Kolonist { Name = "Quartermaster", isBase = false, Effects = "Logistics, RepBoost" },
-                new Kolonist { Name = "Scout", isBase = false, Effects = "Explorer" }
+                new Kolonist { Name = "Pilot", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Pilot"), isBase = true, Effects = "Autopilot, VesselControl, RepBoost, Logistics, Explorer" },
+                new Kolonist { Name = "Scientist", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Scientist"), isBase = true, Effects = "Science, Experiment, Botany, Agronomy, Medical, ScienceBoost" },
+                new Kolonist { Name = "Engineer", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Engineer"), isBase = true, Effects = "Repair, Converter, Drill, Geology, FundsBoost" },
+                new Kolonist { Name = "Kolonist", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Kolonist"), isBase = false, Effects = "RepBoost, FundsBoost, ScienceBoost" },
+                new Kolonist { Name = "Miner", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Miner"), isBase = false, Effects = "Drill, FundsBoost" },
+                new Kolonist { Name = "Technician", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Technician"), isBase = false, Effects = "Converter, FundsBoost" },
+                new Kolonist { Name = "Mechanic", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Mechanic"), isBase = false, Effects = "Repair, FundsBoost" },
+                new Kolonist { Name = "Biologist", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Biologist"), isBase = false, Effects = "Biology, ScienceBoost" },
+                new Kolonist { Name = "Geologist", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Geologist"), isBase = false, Effects = "Geology, FundsBoost" },
+                new Kolonist { Name = "Farmer", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Farmer"), isBase = false, Effects = "Agronomy, ScienceBoost, RepBoost" },
+                new Kolonist { Name = "Medic", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Medic"), isBase = false, Effects = "Medical, ScienceBoost, RepBoost" },
+                new Kolonist { Name = "Quartermaster", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Quartermaster"), isBase = false, Effects = "Logistics, RepBoost" },
+                new Kolonist { Name = "Scout", displayName = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Scout"), isBase = false, Effects = "Explorer" }
             };
             KGendArray = new GUIContent[3] { KGRandom, KMale, KFemale };
         }
@@ -122,9 +149,9 @@ namespace KolonyTools.AC
             {
                 ProtoCrewMember.Gender? chosenGender =  null;
                 var selectedGender = KGendArray[KGender].text;
-                if (selectedGender.Equals("Male"))
+                if (selectedGender.Equals(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Male")))
                     chosenGender = ProtoCrewMember.Gender.Male;
-                else if (selectedGender.Equals("Female"))
+                else if (selectedGender.Equals(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Female")))
                     chosenGender = ProtoCrewMember.Gender.Female;
                 ProtoCrewMember newKerb = SpawnKerbal(chosenGender);
 
@@ -232,20 +259,20 @@ namespace KolonyTools.AC
         private string hireStatus()
         {
 
-            string bText = "Hire Applicant";
+            string bText = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Hire");
             if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
             {
                 double kredits = Funding.Instance.Funds;
                 if (HighLogic.CurrentGame.CrewRoster.GetActiveCrewCount() >= GameVariables.Instance.GetActiveCrewLimit(ScenarioUpgradeableFacilities.GetFacilityLevel(SpaceCenterFacility.AstronautComplex)))
                 {
-                    bText = "Roster is Full!";
+                    bText = Localizer.Format("#LOC_USI_MKS_AstronautComplex_Full");
                     hTest = false;
                 }
                 else
                 {
                     if (costMath() > kredits)
                     {
-                        bText = "Not Enough Funds!";
+                        bText = Localizer.Format("#LOC_USI_MKS_AstronautComplex_NoFunds");
                         hTest = false;
                     }
                     else
@@ -309,11 +336,11 @@ namespace KolonyTools.AC
 
             GUILayout.BeginArea(_areaRect);
             {
-                GUILayout.Label("Recruit new Kerbalnaut"); // Testing Renaming Label Works
+                GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Recruit")); // Testing Renaming Label Works
 
                 // Gender selection 
                 GUILayout.BeginHorizontal("box");
-                KGender = GUILayout.Toolbar(KGender, KGendArray);
+                KGender = GUILayout.Toolbar(KGender, KGendArray, _GenderButtonStyle);
                 GUILayout.EndHorizontal();
 
                 // Career selection
@@ -326,16 +353,24 @@ namespace KolonyTools.AC
                 {
                     _recruitableKolonists = _kolonists.Select(k => k.Name).Take(3).ToArray();
                 }
-                KCareer = GUILayout.SelectionGrid(KCareer, _recruitableKolonists, 4);
+                if (KolonyACOptions.KolonistHiringEnabled)
+                {
+                    _displayRecruitableKolonists = _kolonists.Select(k => k.displayName).ToArray();
+                }
+                else
+                {
+                    _displayRecruitableKolonists = _kolonists.Select(k => k.displayName).Take(3).ToArray();
+                }
+                KCareer = GUILayout.SelectionGrid(KCareer, _displayRecruitableKolonists, 4, _ButtonStyle, GUILayout.Height(144f));
 
                 // Adding a section for 'number/bulk hire' here using the int array kBulk 
                 if (cbulktest() < 1)
                 {
-                    GUILayout.Label("Bulk hire Option: You can not hire any more kerbals at this time!");
+                    GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_NoBulk"));
                 }
                 else
                 {
-                    GUILayout.Label("Bulk hire Selector: " + KBulki);
+                    GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Bulk") + KBulki);
                     KBulk = GUILayout.HorizontalSlider(KBulk, 1, cbulktest());
                     KBulki = Convert.ToInt32(KBulk);
 
@@ -348,42 +383,42 @@ namespace KolonyTools.AC
                 {
                     // Courage Brains and BadS flag selections
                     GUILayout.BeginVertical("box");
-                    GUILayout.Label("Courage:  " + Math.Truncate(KCourage));
+                    GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Courage") + Math.Truncate(KCourage));
                     KCourage = GUILayout.HorizontalSlider(KCourage, 0, 100);
-                    GUILayout.Label("Stupidity:  " + Math.Truncate(KStupidity));
+                    GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Stupidity") + Math.Truncate(KStupidity));
                     KStupidity = GUILayout.HorizontalSlider(KStupidity, 0, 100);
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label("Is this Kerbal Fearless?");
-                    KFearless = GUILayout.Toggle(KFearless, "Fearless");
+                    GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_isFearless"));
+                    KFearless = GUILayout.Toggle(KFearless, Localizer.Format("#LOC_USI_MKS_AstronautComplex_Fearless"));
                     GUILayout.EndHorizontal();
                     GUILayout.EndVertical();
 
                     // Level selection
                     GUILayout.BeginVertical("box");
-                    GUILayout.Label("Select Your Level:");
+                    GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_SelectLv"));
 
                     // If statements for level options
                     if (kerExp == false)
                     {
-                        GUILayout.Label("Level 5 - Mandatory for Career with no EXP enabled.");
+                        GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv5_Career"));
                     }
                     else
                     {
                         if (ACLevel == 0)
                         {
-                            KLevel = GUILayout.Toolbar(KLevel, KLevelStringsZero);
+                            KLevel = GUILayout.Toolbar(KLevel, KLevelStringsZero, _ButtonStyle, GUILayout.Height(36f));
                         }
                         if (ACLevel == 0.5)
                         {
-                            KLevel = GUILayout.Toolbar(KLevel, KLevelStringsOne);
+                            KLevel = GUILayout.Toolbar(KLevel, KLevelStringsOne, _ButtonStyle, GUILayout.Height(36f));
                         }
                         if (ACLevel == 1)
                         {
-                            KLevel = GUILayout.Toolbar(KLevel, KLevelStringsTwo);
+                            KLevel = GUILayout.Toolbar(KLevel, KLevelStringsTwo, _ButtonStyle, GUILayout.Height(36f));
                         }
                         if (ACLevel == 5)
                         {
-                            GUILayout.Label("Level 5 - Mandatory for Sandbox or Science Mode.");
+                            GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Lv5_Sandbox"));
                         }
                     }
                     GUILayout.EndVertical();
@@ -396,12 +431,12 @@ namespace KolonyTools.AC
                     //GUILayout.FlexibleSpace();
                     if (costMath() <= Funding.Instance.Funds)
                     {
-                        GUILayout.Label("Cost: " + costMath(), HighLogic.Skin.textField);
+                        GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_Cost") + costMath(), HighLogic.Skin.textField);
                     }
                     else
                     {
                         GUI.color = Color.red;
-                        GUILayout.Label("Insufficient Funds - Cost: " + costMath(), HighLogic.Skin.textField);
+                        GUILayout.Label(Localizer.Format("#LOC_USI_MKS_AstronautComplex_InsFunds") + costMath(), HighLogic.Skin.textField);
                         GUI.color = basecolor;
                     }
                     // GUILayout.FlexibleSpace();
@@ -414,11 +449,11 @@ namespace KolonyTools.AC
                 string statusText = hireStatus();
                 if (hTest)
                 {
-                    if (GUILayout.Button(statusText, GUILayout.Width(200f)))
+                    if (GUILayout.Button(statusText, _ButtonStyle, GUILayout.Width(200f), GUILayout.Height(36f)))
                         kHire();
                 }
                 else
-                    GUILayout.Button(statusText, GUILayout.Width(200f));
+                    GUILayout.Button(statusText, _ButtonStyle, GUILayout.Width(200f), GUILayout.Height(36f));
 
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
