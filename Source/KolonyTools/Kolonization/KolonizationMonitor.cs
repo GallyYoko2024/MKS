@@ -102,7 +102,7 @@ namespace KolonyTools
             }
 
             // Setup tab labels
-            _tabLabels = new[] { Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable1"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable2"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable3"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable4"), Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Lable5") };
+            _tabLabels = new[] { Localizer.Format("#LOC_USI_MKS_KoloDash_KoloStat"), Localizer.Format("#LOC_USI_MKS_KoloDash_LocLogi"), Localizer.Format("#LOC_USI_MKS_KoloDash_PlaLogi"), Localizer.Format("#LOC_USI_MKS_KoloDash_KoloInv"), Localizer.Format("#LOC_USI_MKS_KoloDash_OrbLogi") };
         }
 
         private void InitStyles()
@@ -145,7 +145,7 @@ namespace KolonyTools
                     return;
 
                 // Draw main window
-                _windowPosition = GUILayout.Window(12, _windowPosition, OnWindow, Localizer.Format("#LOC_USI_MKS_KolonizationMonitor_Title"), _windowStyle);
+                _windowPosition = GUILayout.Window(12, _windowPosition, OnWindow, Localizer.Format("#LOC_USI_MKS_KoloDash_Title"), _windowStyle);
 
                 // Draw child windows
                 foreach (var window in _childWindows)
@@ -195,7 +195,7 @@ namespace KolonyTools
             }
 
             GUILayout.EndVertical();
-
+            
             // Make UI window draggable
             GUI.DragWindow();
         }
